@@ -1,0 +1,31 @@
+# Task 4 pointwise judge configuration (Calibrated Aesthetic Score)
+# Run from the repository root:
+#   python -m tasks.task4.eval_pointwise --config configs/task4_pointwise.yaml \
+#       --participant alpha=<run_name>
+#   # audit inputs only: --dry-run ; smoke: --limit 5
+
+# The official protocol judges with GPT-5.4 on the full 1,395-sample cohort.
+# Any OpenAI-compatible VLM with json_schema support works, but scores are
+# comparable only within one judge.
+model: "gpt-5.4-2026-03-05"      # judge model name sent to the API
+protocol: "openai"                # judge requires the openai protocol
+
+# Official endpoints, for reference:
+#   OpenAI:            https://api.openai.com/v1
+#   DashScope (Qwen):  https://dashscope.aliyuncs.com/compatible-mode/v1
+base_url: "https://api.openai.com/v1"
+
+# Name of the environment variable holding the API key (default OPENAI_API_KEY).
+api_key_env: "OPENAI_API_KEY"
+
+request:
+  # Judge call contract is frozen: temperature 0, json_schema, reasoning off
+  # (reasoning_effort: "none"), no max_tokens; only 408/429/5xx and transport
+  # errors retry (5s/10s, 3 attempts).
+  concurrency: 4
+  timeout: 600
+
+eval:
+  runs_root: "outputs/task4/runs"
+  data_root: "data/task4"
+  out_dir: null                     # null -> outputs/task4/eval/pointwise/<auto>

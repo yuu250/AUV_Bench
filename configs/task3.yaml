@@ -1,0 +1,42 @@
+# Task 3: structured repair of the degraded page (direct chain) — sample configuration
+# Run from the repository root:
+#   python -m tasks.task3.prebuild                 # once per environment
+#   python -m tasks.task3.build_gt                 # once per environment
+#   python -m tasks.task3.run --config configs/task3.yaml
+#   python -m tasks.task3.evaluate outputs/task3/results/repair_<model>.jsonl
+
+model: "qwen3-vl-plus"            # model name sent to the API
+protocol: "openai"                # openai | anthropic
+
+# Official endpoints, for reference:
+#   OpenAI:            https://api.openai.com/v1
+#   Anthropic:         https://api.anthropic.com        (protocol: anthropic)
+#   DashScope (Qwen):  https://dashscope.aliyuncs.com/compatible-mode/v1
+#   Local vLLM:        http://localhost:8000/v1
+base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+
+# Name of the environment variable holding the API key.
+# Default when omitted: OPENAI_API_KEY for protocol=openai,
+# ANTHROPIC_API_KEY for protocol=anthropic.
+api_key_env: "DASHSCOPE_API_KEY"
+
+input:
+  cohort: "data/task3/cohort.json"
+  gt: "data/task3/unified_gt.jsonl"
+  gt_metadata: "data/task3/metadata.json"
+  pages_root: "data/task3"
+  # Advisory Task 2 predictions for the same model. Missing/unusable rows
+  # degrade to a "{}" handoff; the page and scoring scope never change.
+  # Set to null to run with no advisory context at all.
+  advisory_predictions: "outputs/task2/predictions/diagnosis_qwen3-vl-plus.jsonl"
+  cache_root: "results/task3_reference_cache"
+
+request:
+  concurrency: 4                  # samples in flight; each renders locally too
+  max_retries: 3                  # only HTTP 408/429/5xx and transport errors retry
+  timeout: 600
+  max_model_html_chars: 300000    # bounded HTML evidence budget per request
+
+output:
+  results: "outputs/task3/results/repair_{model}.jsonl"
+  runs_dir: "outputs/task3/runs"

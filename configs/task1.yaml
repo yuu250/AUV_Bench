@@ -1,0 +1,47 @@
+# Task 1: UI aesthetic judgment — sample configuration
+# Run from the repository root:
+#   python -m tasks.task1.run --config configs/task1.yaml
+
+model: "qwen3.7-plus"             # model name sent to the API
+protocol: "openai"                # openai | anthropic
+
+# Official endpoints, for reference:
+#   OpenAI:            https://api.openai.com/v1
+#   Anthropic:         https://api.anthropic.com        (protocol: anthropic)
+#   DashScope (Qwen):  https://dashscope.aliyuncs.com/compatible-mode/v1
+#   Local vLLM:        http://localhost:8000/v1
+base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+
+# Name of the environment variable holding the API key.
+# Default when omitted: OPENAI_API_KEY for protocol=openai,
+# ANTHROPIC_API_KEY for protocol=anthropic.
+api_key_env: "DASHSCOPE_API_KEY"
+
+input:
+  manifest: "data/task1/manifest.jsonl"
+  images_root: "data/task1/images"
+  lang: "en"                      # en (main setting) | zh (control setting)
+  url_mode: "direct"              # direct | download_slice (only for samples with image_url)
+
+image:
+  # Slicing protocol constants. These define the experimental protocol;
+  # changing them breaks comparability with published results.
+  slice_height: 1800
+  slice_overlap: 180
+  overview_height: 1500
+  max_slices: 12                  # pages needing more slices are excluded (not sent)
+  max_image_bytes: 9437184        # 9 MiB; larger images are sent as JPEG
+  jpeg_quality: 90
+  save_processed_images: true     # save JPEG-compressed slices locally for inspection
+  processed_dir: "outputs/task1/processed_images"
+
+request:
+  temperature: 0.0
+  max_tokens: 2000
+  disable_thinking: true          # send enable_thinking=false where supported (OpenAI-compatible only)
+  concurrency: 5
+  max_retries: 3
+  timeout: 600
+
+output:
+  predictions: "outputs/task1/predictions/scores_{model}_{lang}.jsonl"

@@ -1,0 +1,39 @@
+# Task 4: UI generation from the frozen Top-K inputs — sample configuration
+# Run from the repository root:
+#   python -m tasks.task4.run --config configs/task4.yaml [--limit N] [--dry-run]
+#   python -m tasks.task4.render <run_name>          # then render the pages
+#   python -m tasks.task4.eval_pointwise --config configs/task4_pointwise.yaml ...
+#   python -m tasks.task4.eval_pairwise  --config configs/task4_pairwise.yaml ...
+
+model: "qwen3-vl-plus"            # generator model name sent to the API
+protocol: "openai"                # openai | anthropic
+
+# Official endpoints, for reference:
+#   OpenAI:            https://api.openai.com/v1
+#   Anthropic:         https://api.anthropic.com        (protocol: anthropic)
+#   DashScope (Qwen):  https://dashscope.aliyuncs.com/compatible-mode/v1
+#   Local vLLM:        http://localhost:8000/v1
+base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+
+# Name of the environment variable holding the API key.
+# Default when omitted: OPENAI_API_KEY for protocol=openai,
+# ANTHROPIC_API_KEY for protocol=anthropic.
+api_key_env: "DASHSCOPE_API_KEY"
+
+input:
+  queries: "data/task4/queries.jsonl"        # the frozen 1,395-item dedup cohort
+  cohort: "data/task4/cohort.json"           # required for the default queries
+  inputs_root: "data/task4/inputs"           # released Top-K pack (per-sample dirs)
+  assets_copy: false                         # true: copy assets instead of symlinking
+
+request:
+  temperature: 0.0                # frozen
+  disable_thinking: true          # frozen: thinking/CoT disabled for generation
+  concurrency: 32
+  max_retries: 4                  # frozen ladder [5s, 15s, 45s] between attempts
+  timeout: 600
+  max_tokens: null                # null = omit (openai); anthropic defaults to 32768
+
+output:
+  runs_root: "outputs/task4/runs"
+  run_name: "{model}-topk-v5"
