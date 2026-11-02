@@ -1,6 +1,6 @@
 # AUV-BENCH
 
-**Aesthetic Understanding and Generation Evaluation for User Interfaces**
+Our data is available [here](https://huggingface.co/datasets/dokiik/AUV_Bench).
 
 AUV-BENCH evaluates how multimodal models assess, diagnose, repair, and generate
 web interface designs. This repository provides inference pipelines, webpage
@@ -207,4 +207,20 @@ See [Analysis](analysis/README.md) for definitions and output formats.
 ```bash
 pip install -r requirements-dev.txt
 python -m pytest tests/
+```
+
+## Citation
+
+If you find AUV-Bench useful in your research, please consider citing our paper:
+
+```bibtex
+@misc{deng2026auvbenchaestheticunderstandinggeneration,
+  title={AUV-Bench: Aesthetic Understanding and Generation Evaluation for User Interfaces},
+  author={Zhijie Deng and Ling Li and Junhao Ji and Siwei Lyu and Zhipeng Xu and Zulong Chen and Rongyao Fang and Shuai Bai and Xuming Hu and Jiaheng Wei},
+  year={2026},
+  eprint={2609.34854},
+  archivePrefix={arXiv},
+  primaryClass={cs.AI},
+  url={https://arxiv.org/abs/2609.34854}
+}
 ```
